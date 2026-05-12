@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MML 05 &mdash; Vector Calculus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+    <style>
+        :root { --bg-primary:#0a0a0a; --bg-card:#0d1117; --bg-code:#161b22; --text-primary:#e6edf3; --text-secondary:#8b949e; --accent:#a78bfa; --accent-dim:#a78bfa44; --accent-glow:#a78bfa33; --accent-2:#f472b6; --accent-3:#fbbf24; --accent-4:#34d399; --border:#21262d; --font-display:'Space Grotesk',sans-serif; --font-mono:'JetBrains Mono','Fira Code',monospace; --font-body:'Inter',sans-serif; --max-width:900px; }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html{scroll-behavior:smooth}
+        body{background:var(--bg-primary);color:var(--text-primary);font-family:var(--font-body);font-size:17px;line-height:1.7;overflow-x:hidden}
+        .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem 1.5rem;text-align:center;position:relative}
+        .hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:600px;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 70%);pointer-events:none;z-index:0}
+        .hero>*{position:relative;z-index:1}
+        .series-label{font-family:var(--font-mono);font-size:.85rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
+        .hero h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);font-weight:700;color:var(--text-primary);line-height:1.2;margin-bottom:1rem}
+        .hero h1 .accent{color:var(--accent)}
+        .hero .subtitle{font-size:1.1rem;color:var(--text-secondary);max-width:640px;margin-bottom:2rem}
+        .tags{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:2.5rem}
+        .tag{font-family:var(--font-mono);font-size:.75rem;padding:.25rem .75rem;border-radius:999px;border:1px solid var(--accent);color:var(--accent);background:var(--accent-dim);white-space:nowrap}
+        .pipeline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.25rem;margin-bottom:1rem;max-width:var(--max-width)}
+        .pipeline-step{font-family:var(--font-mono);font-size:.7rem;padding:.3rem .7rem;background:var(--bg-card);border:1px solid var(--border);border-radius:4px;color:var(--text-secondary);white-space:nowrap}
+        .pipeline-arrow{color:var(--accent);font-size:.9rem;font-weight:700}
+        .slide{min-height:100vh;max-width:var(--max-width);margin:0 auto;padding:4rem 1.5rem;position:relative;display:flex;flex-direction:column;justify-content:center}
+        .slide-number{font-family:var(--font-display);font-size:5rem;font-weight:700;color:var(--accent-dim);position:absolute;top:2rem;right:1.5rem;line-height:1;user-select:none}
+        .slide h2{font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--accent);margin-bottom:1.5rem;line-height:1.25}
+        .slide h3{font-family:var(--font-display);font-size:1.3rem;font-weight:600;color:var(--text-primary);margin-top:1.5rem;margin-bottom:.75rem}
+        .slide p{margin-bottom:1rem;color:var(--text-secondary)}
+        .slide p strong{color:var(--text-primary)}
+        .slide ul,.slide ol{margin-bottom:1rem;padding-left:1.5rem;color:var(--text-secondary)}
+        .slide li{margin-bottom:.4rem}
+        .slide li strong{color:var(--text-primary)}
+        .slide code{background:var(--bg-code);padding:.1rem .35rem;border-radius:3px;font-family:var(--font-mono);font-size:.85em;color:var(--accent)}
+        .diagram-grid{display:grid;gap:.75rem;margin:1.5rem 0;padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:8px}
+        .diagram-grid.cols-2{grid-template-columns:1fr 1fr}
+        .diagram-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+        .diagram-panel{padding:1rem;background:var(--bg-code);border:1px solid var(--border);border-radius:6px}
+        .diagram-panel.accent-border{border-left:3px solid var(--accent)}
+        .diagram-panel.r{border-left:3px solid var(--accent-2)}
+        .diagram-panel.y{border-left:3px solid var(--accent-3)}
+        .diagram-panel.g{border-left:3px solid var(--accent-4)}
+        .diagram-panel h4{font-family:var(--font-display);font-size:1rem;color:var(--accent);margin-bottom:.5rem}
+        .diagram-panel.r h4{color:var(--accent-2)}
+        .diagram-panel.y h4{color:var(--accent-3)}
+        .diagram-panel.g h4{color:var(--accent-4)}
+        .diagram-panel p,.diagram-panel ul{font-size:.9rem}
+        .callout{background:var(--bg-card);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.25rem;margin:1.25rem 0}
+        .callout p{margin-bottom:0}
+        .callout .callout-label{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.3rem}
+        .canvas-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1rem;margin:1.25rem 0;overflow-x:auto}
+        .canvas-wrap canvas{display:block;margin:0 auto;max-width:100%}
+        .control-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin:1.25rem 0}
+        .control-row{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;margin-bottom:.75rem}
+        .control-row label{font-family:var(--font-mono);font-size:.8rem;color:var(--text-secondary);min-width:130px}
+        .control-row input[type="range"]{flex:1;min-width:150px;accent-color:var(--accent)}
+        .control-row select{background:var(--bg-code);border:1px solid var(--border);color:var(--text-primary);border-radius:4px;padding:.3rem .5rem;font-family:var(--font-mono);font-size:.8rem}
+        .control-row .val{font-family:var(--font-mono);font-size:.85rem;color:var(--accent);min-width:80px;text-align:right}
+        .btn{font-family:var(--font-mono);font-size:.8rem;padding:.4rem .9rem;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent);border-radius:4px;cursor:pointer}
+        .btn:hover{background:rgba(167,139,250,.25)}
+        .btn.secondary{background:var(--bg-code);color:var(--text-secondary);border-color:var(--border)}
+        .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem;margin-top:.75rem}
+        .metric{background:var(--bg-code);border:1px solid var(--border);border-radius:6px;padding:.6rem .8rem;text-align:center}
+        .metric .metric-label{font-family:var(--font-mono);font-size:.7rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em}
+        .metric .metric-value{font-family:var(--font-display);font-size:1.25rem;color:var(--accent);font-weight:600;margin-top:.2rem}
+        .contents-list{list-style:none;padding-left:0;counter-reset:contents}
+        .contents-list li{counter-increment:contents;padding:.6rem 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem}
+        .contents-list li:last-child{border-bottom:none}
+        .contents-list li::before{content:counter(contents,decimal-leading-zero);font-family:var(--font-mono);font-size:.85rem;color:var(--accent);min-width:2rem}
+        .contents-list a{color:var(--text-primary);text-decoration:none}
+        .contents-list a:hover{color:var(--accent)}
+        .footer{text-align:center;padding:3rem 1.5rem;color:var(--text-secondary);font-size:.85rem;border-top:1px solid var(--border);max-width:var(--max-width);margin:0 auto}
+        .footer a{color:var(--accent);text-decoration:none}
+        .katex{color:var(--text-primary)}
+        .katex-display{margin:1rem 0;overflow-x:auto;overflow-y:hidden}
+        table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+        th{background:var(--bg-code);color:var(--accent);font-weight:600;text-align:left;padding:.6rem .85rem;border-bottom:1px solid var(--border);font-family:var(--font-display)}
+        td{padding:.5rem .85rem;border-bottom:1px solid var(--border);color:var(--text-secondary);vertical-align:top}
+        tr:last-child td{border-bottom:none}
+        tr:nth-child(even) td{background:rgba(13,17,23,.5)}
+        @media (max-width:640px){.slide{padding:3rem 1rem;min-height:auto}.slide-number{font-size:3rem;top:1.5rem;right:1rem}.slide h2{font-size:1.5rem}.diagram-grid.cols-2,.diagram-grid.cols-3{grid-template-columns:1fr}.hero h1{font-size:1.8rem}}
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="series-label">Mathematics for Machine Learning &mdash; Deck 05</div>
+    <h1>Vector <span class="accent">Calculus</span></h1>
+    <p class="subtitle">Derivatives, Jacobians, the chain rule on a DAG, and the multivariate Taylor series &mdash; the language every training loop reads.</p>
+
+    <div class="tags">
+        <span class="tag">gradient</span><span class="tag">Jacobian</span>
+        <span class="tag">chain rule</span><span class="tag">backprop</span>
+        <span class="tag">autodiff</span><span class="tag">Taylor</span>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step">$f'(x)$</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">$\nabla f$</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">Jacobian $J$</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">chain rule</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step">backprop</span>
+    </div>
+</header>
+
+<section class="slide" id="slide-00">
+    <div class="slide-number">00</div>
+    <h2>Topics We'll Cover</h2>
+    <ul class="contents-list">
+        <li><a href="#slide-01">Univariate differentiation, re-read as linear approximation</a></li>
+        <li><a href="#slide-02">Partial derivatives and the gradient</a></li>
+        <li><a href="#slide-03">The Jacobian</a></li>
+        <li><a href="#slide-04">Gradients of matrix expressions</a></li>
+        <li><a href="#slide-05">The chain rule as matrix product</a></li>
+        <li><a href="#slide-06">Backpropagation on a DAG</a></li>
+        <li><a href="#slide-07">Forward vs reverse mode autodiff</a></li>
+        <li><a href="#slide-08">Hessian and multivariate Taylor</a></li>
+        <li><a href="#slide-09">Interactive: gradient descent on a 2D surface</a></li>
+        <li><a href="#slide-10">Where this lands in Part II</a></li>
+        <li><a href="#slide-11">Cheat sheet</a></li>
+    </ul>
+</section>
+
+<section class="slide" id="slide-01">
+    <div class="slide-number">01</div>
+    <h2>Univariate Differentiation, Re-read</h2>
+    <p>The derivative of $f:\mathbb{R}\to\mathbb{R}$ at $x_0$ is</p>
+    <p>$$f'(x_0) = \lim_{h\to 0}\frac{f(x_0+h)-f(x_0)}{h}.$$</p>
+    <p>The more useful re-reading: $f'(x_0)$ is the unique number such that</p>
+    <p>$$f(x_0 + h) = f(x_0) + f'(x_0)\,h + o(h).$$</p>
+    <p>So <em>the derivative is the best linear approximation of $f$ near $x_0$</em>. Every later definition in this deck generalises that sentence, not the limit.</p>
+
+    <h3>The rules, re-derived</h3>
+    <table>
+        <thead><tr><th>Rule</th><th>Statement</th></tr></thead>
+        <tbody>
+            <tr><td>linearity</td><td>$(\alpha f + \beta g)' = \alpha f' + \beta g'$</td></tr>
+            <tr><td>product</td><td>$(fg)' = f'g + fg'$</td></tr>
+            <tr><td>quotient</td><td>$(f/g)' = (f'g - fg')/g^2$</td></tr>
+            <tr><td>chain</td><td>$(g\circ f)'(x) = g'(f(x))\cdot f'(x)$</td></tr>
+        </tbody>
+    </table>
+    <p>The chain rule is the centre of this deck. Everything else generalises by replacing real numbers with vectors and ordinary multiplication with matrix multiplication.</p>
+</section>
+
+<section class="slide" id="slide-02">
+    <div class="slide-number">02</div>
+    <h2>Partial Derivatives and the Gradient</h2>
+    <p>For $f:\mathbb{R}^n\to\mathbb{R}$, the <strong>partial derivative</strong> with respect to $x_i$ is the ordinary derivative obtained by holding all other variables fixed:</p>
+    <p>$$\frac{\partial f}{\partial x_i}(\mathbf{x}) = \lim_{h\to 0}\frac{f(\mathbf{x} + h\mathbf{e}_i) - f(\mathbf{x})}{h}.$$</p>
+    <p>The <strong>gradient</strong> stacks them into a row vector (book convention):</p>
+    <p>$$\nabla_{\mathbf{x}} f(\mathbf{x}) \;=\; \frac{\partial f}{\partial \mathbf{x}} \;=\; \left[\,\frac{\partial f}{\partial x_1},\; \dots,\; \frac{\partial f}{\partial x_n}\,\right].$$</p>
+
+    <h3>Linear approximation</h3>
+    <p>$$f(\mathbf{x}+\mathbf{h}) = f(\mathbf{x}) + \nabla f(\mathbf{x})\,\mathbf{h} + o(\|\mathbf{h}\|).$$</p>
+    <p>The gradient is the row vector that, multiplied by any direction $\mathbf{h}$, gives the rate of change of $f$ along $\mathbf{h}$.</p>
+
+    <h3>Direction of steepest ascent</h3>
+    <p>Among unit-length $\mathbf{h}$, the one maximising $\nabla f \,\mathbf{h}$ is $\mathbf{h} = \nabla f^\top / \|\nabla f\|$. So the gradient (as a column) <em>points uphill</em>, with magnitude equal to the steepness. Gradient descent walks in the opposite direction.</p>
+</section>
+
+<section class="slide" id="slide-03">
+    <div class="slide-number">03</div>
+    <h2>The Jacobian</h2>
+    <p>For $\mathbf{f}:\mathbb{R}^n\to\mathbb{R}^m$ with components $f_i$, the <strong>Jacobian</strong> is the $m\times n$ matrix of partial derivatives:</p>
+    <p>$$J_{\mathbf{f}}(\mathbf{x}) \;=\; \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \;=\; \begin{bmatrix} \frac{\partial f_1}{\partial x_1} &amp; \cdots &amp; \frac{\partial f_1}{\partial x_n} \\ \vdots &amp; &amp; \vdots \\ \frac{\partial f_m}{\partial x_1} &amp; \cdots &amp; \frac{\partial f_m}{\partial x_n} \end{bmatrix}.$$</p>
+    <p>Row $i$ is $\nabla f_i$. So the gradient of a scalar function is just the Jacobian when $m=1$.</p>
+
+    <h3>The linear approximation generalises</h3>
+    <p>$$\mathbf{f}(\mathbf{x}+\mathbf{h}) = \mathbf{f}(\mathbf{x}) + J_{\mathbf{f}}(\mathbf{x})\,\mathbf{h} + o(\|\mathbf{h}\|).$$</p>
+
+    <h3>Three useful Jacobians</h3>
+    <table>
+        <thead><tr><th>$\mathbf{f}(\mathbf{x})$</th><th>$\partial \mathbf{f}/\partial \mathbf{x}$</th></tr></thead>
+        <tbody>
+            <tr><td>$A\mathbf{x}$</td><td>$A$</td></tr>
+            <tr><td>$\mathbf{x}\odot\mathbf{x}$ (element-wise square)</td><td>$\mathrm{diag}(2\mathbf{x})$</td></tr>
+            <tr><td>$\sigma(\mathbf{x})$ (sigmoid, element-wise)</td><td>$\mathrm{diag}(\sigma(\mathbf{x})\odot(1-\sigma(\mathbf{x})))$</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="slide" id="slide-04">
+    <div class="slide-number">04</div>
+    <h2>Gradients of Matrix Expressions</h2>
+    <p>ML constantly differentiates scalars with respect to matrices. The shape convention is:</p>
+    <p>$$\frac{\partial f}{\partial A} \in \mathbb{R}^{m\times n} \quad \text{has entries } \left[\frac{\partial f}{\partial A}\right]_{ij} = \frac{\partial f}{\partial A_{ij}}.$$</p>
+
+    <h3>Six identities you will use often</h3>
+    <table>
+        <thead><tr><th>$f$</th><th>$\partial f/\partial \mathbf{x}$</th></tr></thead>
+        <tbody>
+            <tr><td>$\mathbf{a}^\top\mathbf{x}$</td><td>$\mathbf{a}^\top$</td></tr>
+            <tr><td>$\mathbf{x}^\top A\mathbf{x}$</td><td>$\mathbf{x}^\top(A + A^\top)$ &mdash; $2A\mathbf{x}^\top$ when $A$ symmetric</td></tr>
+            <tr><td>$\|A\mathbf{x}-\mathbf{b}\|^2$</td><td>$2(A\mathbf{x}-\mathbf{b})^\top A$</td></tr>
+            <tr><td>$\log\det A$ ($A\succ 0$)</td><td>$(A^{-1})^\top$, w.r.t. $A$</td></tr>
+            <tr><td>$\mathrm{tr}(AB)$</td><td>$B^\top$, w.r.t. $A$</td></tr>
+            <tr><td>$\sigma(\mathbf{x})$ (softmax)</td><td>$\mathrm{diag}(\boldsymbol\sigma) - \boldsymbol\sigma\boldsymbol\sigma^\top$, where $\boldsymbol\sigma = \sigma(\mathbf{x})$</td></tr>
+        </tbody>
+    </table>
+
+    <div class="callout">
+        <div class="callout-label">A trick the book uses</div>
+        <p>To compute $\partial f/\partial A$ where $f$ is a scalar, write $df = \mathrm{tr}(M^\top dA)$ for some matrix $M$. Then $\partial f/\partial A = M$. The trace identity $\mathrm{tr}(P) = \mathrm{tr}(P^\top)$ and the cyclic property let you re-shuffle terms until they fit this pattern.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-05">
+    <div class="slide-number">05</div>
+    <h2>The Chain Rule as Matrix Product</h2>
+    <p>If $\mathbf{g}:\mathbb{R}^n\to\mathbb{R}^m$ and $\mathbf{f}:\mathbb{R}^m\to\mathbb{R}^k$, then the composition $\mathbf{h}=\mathbf{f}\circ\mathbf{g}:\mathbb{R}^n\to\mathbb{R}^k$ has Jacobian</p>
+    <p>$$J_{\mathbf{h}}(\mathbf{x}) = J_{\mathbf{f}}(\mathbf{g}(\mathbf{x}))\, J_{\mathbf{g}}(\mathbf{x}).$$</p>
+    <p>Multivariate chain rule = matrix product. The single fact every line of backprop applies.</p>
+
+    <h3>Chains of three or more</h3>
+    <p>For $\mathbf{h} = \mathbf{f}_L\circ\mathbf{f}_{L-1}\circ\dots\circ\mathbf{f}_1$,</p>
+    <p>$$J_{\mathbf{h}} = J_{\mathbf{f}_L}\cdot J_{\mathbf{f}_{L-1}} \cdots J_{\mathbf{f}_1}.$$</p>
+    <p>An $L$-layer neural network's Jacobian is a product of $L$ Jacobians &mdash; one per layer. The order matters; this is exactly composition of linear maps from deck 02.</p>
+
+    <h3>Why scalar loss makes life easier</h3>
+    <p>Training loss is a scalar, so $J_{\mathbf{f}_L}$ is a row vector ($1\times m$). Computing $J_{\mathbf{h}}$ right-to-left lets every intermediate stay a row vector &mdash; the cost of one matrix-vector product per layer. <em>That</em> is reverse-mode autodiff. Computing left-to-right would require materialising full Jacobians.</p>
+</section>
+
+<section class="slide" id="slide-06">
+    <div class="slide-number">06</div>
+    <h2>Backpropagation on a DAG</h2>
+    <p>Real neural networks aren't strict compositions &mdash; they're directed acyclic graphs with shared subexpressions (residual connections, attention's many heads, etc.). The chain rule generalises seamlessly: for any node $z$,</p>
+    <p>$$\frac{\partial \mathcal{L}}{\partial z} = \sum_{w \text{ child of } z} \frac{\partial \mathcal{L}}{\partial w}\,\frac{\partial w}{\partial z}.$$</p>
+    <p>Each summand says "the loss feels $z$ partly via this child $w$". The algorithm walks the DAG in reverse topological order and accumulates these contributions; every intermediate gets visited once.</p>
+
+    <div class="diagram-grid cols-2">
+        <div class="diagram-panel accent-border">
+            <h4>Forward pass</h4>
+            <p>Visit nodes in topological order. Compute each node's value <em>and</em> save the local Jacobian (or enough of it &mdash; e.g. just $\sigma(x)$ to later compute $\sigma'(x)$).</p>
+        </div>
+        <div class="diagram-panel y">
+            <h4>Backward pass</h4>
+            <p>Visit in reverse. At each node, multiply incoming "upstream gradient" by the saved local Jacobian and route it to parents. Each edge is traversed once.</p>
+        </div>
+    </div>
+
+    <p>Memory grows with the number of forward activations; time grows linearly with the size of the DAG. <em>Gradient checkpointing</em> trades time for memory by re-computing activations on demand.</p>
+</section>
+
+<section class="slide" id="slide-07">
+    <div class="slide-number">07</div>
+    <h2>Forward vs Reverse Mode Autodiff</h2>
+
+    <table>
+        <thead><tr><th></th><th>Forward (JVP)</th><th>Reverse (VJP)</th></tr></thead>
+        <tbody>
+            <tr><td>computes</td><td>$J_{\mathbf{f}}\,\mathbf{v}$ &mdash; "one column of $J$"</td><td>$\mathbf{u}^\top J_{\mathbf{f}}$ &mdash; "one row of $J$"</td></tr>
+            <tr><td>cheap for</td><td>$n$ small (few inputs)</td><td>$m$ small (few outputs &mdash; the loss is 1)</td></tr>
+            <tr><td>memory</td><td>none beyond live activations</td><td>all forward activations stored</td></tr>
+            <tr><td>used by</td><td>JAX <code>jvp</code>, sensitivities, second-order</td><td>PyTorch <code>backward</code>, every NN training step</td></tr>
+        </tbody>
+    </table>
+
+    <p>To compute the gradient of a scalar loss in a deep net, one VJP costs ~the same as the forward pass; one JVP per input variable would cost $n$ forward passes. For modern LLMs $n$ is in the hundreds of billions and the loss is one number &mdash; reverse mode wins decisively.</p>
+
+    <div class="callout">
+        <div class="callout-label">Implementation hint</div>
+        <p>Each "primitive" in PyTorch / JAX / TensorFlow comes with a pair of rules: a forward function $\mathbf{y}=\mathbf{f}(\mathbf{x})$ and a VJP rule $(\mathbf{u}, \mathbf{x}, \mathbf{y}) \mapsto \mathbf{u}^\top J_{\mathbf{f}}(\mathbf{x})$. Composing primitives is what gives you a differentiable program.</p>
+    </div>
+</section>
+
+<section class="slide" id="slide-08">
+    <div class="slide-number">08</div>
+    <h2>Hessian and Multivariate Taylor</h2>
+    <p>The <strong>Hessian</strong> $H_f(\mathbf{x})$ of a scalar $f:\mathbb{R}^n\to\mathbb{R}$ is the $n\times n$ matrix of second partials:</p>
+    <p>$$[H_f]_{ij} = \frac{\partial^2 f}{\partial x_i \partial x_j}.$$</p>
+    <p>If $f$ is $C^2$, $H_f$ is symmetric (Schwarz's theorem).</p>
+
+    <h3>Multivariate Taylor at order 2</h3>
+    <p>$$f(\mathbf{x}+\mathbf{h}) = f(\mathbf{x}) + \nabla f(\mathbf{x})\,\mathbf{h} + \tfrac12\,\mathbf{h}^\top H_f(\mathbf{x})\,\mathbf{h} + o(\|\mathbf{h}\|^2).$$</p>
+    <p>The first two terms give the linear (affine) model used by gradient descent; the third gives Newton's method.</p>
+
+    <h3>Classification of stationary points</h3>
+    <p>At a stationary point ($\nabla f = 0$): the Hessian's signature tells you the type.</p>
+    <ul>
+        <li>$H_f \succ 0$ &rarr; local minimum;</li>
+        <li>$H_f \prec 0$ &rarr; local maximum;</li>
+        <li>$H_f$ indefinite &rarr; saddle point.</li>
+    </ul>
+
+    <p>In high dimensions, almost every stationary point of a non-convex loss is a saddle &mdash; this is one reason SGD works at all.</p>
+</section>
+
+<section class="slide" id="slide-09">
+    <div class="slide-number">09</div>
+    <h2>Interactive: Gradient Descent on a 2D Surface</h2>
+    <p>Pick a loss surface and a starting point. Step size and momentum are adjustable. The path is drawn over a contour plot; the right gauge shows the loss vs iteration. Click the canvas to set the starting point.</p>
+
+    <div class="canvas-wrap">
+        <div style="display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center;justify-content:center;">
+            <canvas id="gd-canvas" width="430" height="360"></canvas>
+            <canvas id="gd-loss" width="240" height="180" style="background:#0d1117;border:1px solid #21262d;border-radius:6px"></canvas>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <div class="control-row">
+            <label>surface</label>
+            <select id="gd-surface">
+                <option value="quad">isotropic bowl</option>
+                <option value="anis" selected>anisotropic ravine</option>
+                <option value="rosen">Rosenbrock</option>
+                <option value="saddle">saddle</option>
+            </select>
+        </div>
+        <div class="control-row">
+            <label for="gd-lr">learning rate</label>
+            <input type="range" id="gd-lr" min="0.001" max="0.4" step="0.001" value="0.05">
+            <div class="val" id="gd-lr-readout">0.050</div>
+        </div>
+        <div class="control-row">
+            <label for="gd-mom">momentum</label>
+            <input type="range" id="gd-mom" min="0" max="0.99" step="0.01" value="0.0">
+            <div class="val" id="gd-mom-readout">0.00</div>
+        </div>
+        <div class="control-row">
+            <button class="btn" id="gd-start">Run</button>
+            <button class="btn secondary" id="gd-reset">Reset</button>
+        </div>
+        <div class="metric-grid">
+            <div class="metric"><div class="metric-label">iteration</div><div class="metric-value" id="gd-it">0</div></div>
+            <div class="metric"><div class="metric-label">loss</div><div class="metric-value" id="gd-l">—</div></div>
+            <div class="metric"><div class="metric-label">|∇L|</div><div class="metric-value" id="gd-g">—</div></div>
+        </div>
+    </div>
+
+    <p>Try the ravine surface with a big learning rate &mdash; the path bounces between the walls and barely makes progress along the floor. Bump the momentum up and it should stop oscillating. That's why Adam exists: it estimates per-coordinate curvature on the fly.</p>
+</section>
+
+<section class="slide" id="slide-10">
+    <div class="slide-number">10</div>
+    <h2>Where This Lands in Part II</h2>
+    <table>
+        <thead><tr><th>Concept</th><th>Used by</th><th>Where</th></tr></thead>
+        <tbody>
+            <tr><td>Gradient of mean-squared error</td><td>Linear regression (ch. 9)</td><td>Setting $\nabla R = 0$ gives the normal equation</td></tr>
+            <tr><td>$\partial \mathbf{x}^\top \Sigma^{-1}\mathbf{x}/\partial\mathbf{x}$</td><td>Gaussian (ch. 6), GMM (ch. 11)</td><td>Maximising likelihoods</td></tr>
+            <tr><td>$\partial \log\det A/\partial A$</td><td>GMM (ch. 11)</td><td>EM update for the covariance</td></tr>
+            <tr><td>Backpropagation</td><td>Any deep model</td><td>Computes $\nabla_\theta \mathcal{L}$</td></tr>
+            <tr><td>Hessian, Newton</td><td>SVM (ch. 12), GLM</td><td>Quadratic-programming solver, IRLS</td></tr>
+            <tr><td>Taylor expansion</td><td>Optimisation (ch. 7)</td><td>Gradient descent = first-order; Newton = second-order</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="slide" id="slide-11">
+    <div class="slide-number">11</div>
+    <h2>Cheat Sheet</h2>
+    <table>
+        <thead><tr><th>Quantity</th><th>Formula</th></tr></thead>
+        <tbody>
+            <tr><td>gradient</td><td>$\nabla f = [\partial f/\partial x_1, \dots, \partial f/\partial x_n]$ (row)</td></tr>
+            <tr><td>Jacobian</td><td>$[J_{\mathbf{f}}]_{ij} = \partial f_i/\partial x_j$, shape $m\times n$</td></tr>
+            <tr><td>chain rule</td><td>$J_{\mathbf{f}\circ\mathbf{g}} = J_\mathbf{f}\,J_\mathbf{g}$</td></tr>
+            <tr><td>$\nabla(\mathbf{a}^\top\mathbf{x})$</td><td>$\mathbf{a}^\top$</td></tr>
+            <tr><td>$\nabla(\mathbf{x}^\top A\mathbf{x})$</td><td>$\mathbf{x}^\top(A+A^\top)$</td></tr>
+            <tr><td>$\nabla\|A\mathbf{x}-\mathbf{b}\|^2$</td><td>$2(A\mathbf{x}-\mathbf{b})^\top A$</td></tr>
+            <tr><td>$\nabla \log\det A$</td><td>$(A^{-1})^\top$</td></tr>
+            <tr><td>Hessian</td><td>$[H_f]_{ij} = \partial^2 f/(\partial x_i\partial x_j)$</td></tr>
+            <tr><td>2nd-order Taylor</td><td>$f(\mathbf{x}+\mathbf{h}) \approx f + \nabla f \cdot \mathbf{h} + \tfrac12 \mathbf{h}^\top H_f \mathbf{h}$</td></tr>
+            <tr><td>steepest descent</td><td>$\mathbf{x}_{t+1} = \mathbf{x}_t - \eta \nabla f(\mathbf{x}_t)^\top$</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<footer class="footer">
+    <p><strong>Book:</strong> Deisenroth, Faisal &amp; Ong, <em>Mathematics for Machine Learning</em> &mdash; Cambridge University Press, 2020, chapter 5.<br>Free PDF: <a href="https://mml-book.github.io/book/mml-book.pdf">mml-book.github.io/book/mml-book.pdf</a></p>
+    <p style="margin-top:.6rem"><a href="https://brendanjameslynskey.github.io/MML_Hub/">&larr; All decks</a> &middot; <a href="https://brendanjameslynskey.github.io/MML_04_Matrix_Decompositions/">prev (04)</a> &middot; <a href="https://brendanjameslynskey.github.io/MML_06_Probability_and_Distributions/">next (06) &rarr;</a></p>
+</footer>
+
+<script>
+// Gradient descent on a 2D surface — contour + path + loss curve
+(function() {
+    const cvs = document.getElementById('gd-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    const lossCvs = document.getElementById('gd-loss');
+    const lctx = lossCvs.getContext('2d');
+
+    const W = 430, H = 360;
+    cvs.width = W; cvs.height = H;
+    cvs.style.width = W+'px'; cvs.style.height = H+'px';
+    const Lw = 240, Lh = 180;
+    lossCvs.width = Lw; lossCvs.height = Lh;
+    lossCvs.style.width = Lw+'px'; lossCvs.style.height = Lh+'px';
+
+    const xMin=-2.5, xMax=2.5, yMin=-2, yMax=2;
+    function toScreen(x,y) { return {sx: (x-xMin)/(xMax-xMin)*W, sy: H - (y-yMin)/(yMax-yMin)*H}; }
+    function fromScreen(sx, sy) { return {x: sx/W*(xMax-xMin)+xMin, y: yMin + (1 - sy/H)*(yMax-yMin)}; }
+
+    const surfaces = {
+        quad: {
+            f: (x,y) => 0.5*(x*x + y*y),
+            g: (x,y) => [x, y]
+        },
+        anis: {
+            f: (x,y) => 0.5*(x*x + 10*y*y),
+            g: (x,y) => [x, 10*y]
+        },
+        rosen: {
+            f: (x,y) => Math.pow(1-x,2) + 5*Math.pow(y - x*x, 2),
+            g: (x,y) => [-2*(1-x) - 20*(y - x*x)*x, 10*(y - x*x)]
+        },
+        saddle: {
+            f: (x,y) => 0.5*(x*x - y*y) + 0.1*(x*x*x*x + y*y*y*y),
+            g: (x,y) => [x + 0.4*x*x*x, -y + 0.4*y*y*y]
+        }
+    };
+
+    let surfaceName = 'anis';
+    let lr = 0.05, mom = 0;
+    let start = {x: -2.0, y: 1.6};
+    let path = [start];
+    let losses = [];
+    let velocity = {x: 0, y: 0};
+    let running = false;
+    let raf = null;
+
+    function drawContours() {
+        // background
+        ctx.fillStyle = '#0d1117'; ctx.fillRect(0,0,W,H);
+        const surf = surfaces[surfaceName];
+        // sample loss in a grid
+        const NX = 80, NY = 60;
+        let lo = Infinity, hi = -Infinity;
+        const grid = new Float32Array(NX*NY);
+        for (let j=0;j<NY;j++) {
+            const y = yMin + (j/(NY-1))*(yMax-yMin);
+            for (let i=0;i<NX;i++) {
+                const x = xMin + (i/(NX-1))*(xMax-xMin);
+                const v = surf.f(x,y);
+                grid[j*NX+i] = v;
+                if (v<lo) lo=v; if (v>hi) hi=v;
+            }
+        }
+        // colour fill
+        const imgD = ctx.createImageData(W, H);
+        for (let py=0;py<H;py++) {
+            const fy = py/(H-1);
+            const j = fy*(NY-1);
+            const j0 = Math.floor(j), j1 = Math.min(NY-1, j0+1);
+            const ty = j - j0;
+            for (let px=0;px<W;px++) {
+                const fx = px/(W-1);
+                const ii = fx*(NX-1);
+                const i0 = Math.floor(ii), i1 = Math.min(NX-1, i0+1);
+                const tx = ii - i0;
+                const v00 = grid[j0*NX+i0], v10 = grid[j0*NX+i1];
+                const v01 = grid[j1*NX+i0], v11 = grid[j1*NX+i1];
+                const v = (v00*(1-tx)+v10*tx)*(1-ty) + (v01*(1-tx)+v11*tx)*ty;
+                const t = (v - lo) / (hi - lo + 1e-9);
+                const tt = Math.pow(t, 0.4);
+                const r = Math.round(13 + tt*150);
+                const g = Math.round(17 + tt*100);
+                const b = Math.round(23 + tt*180);
+                const k = (py*W+px)*4;
+                imgD.data[k]=r; imgD.data[k+1]=g; imgD.data[k+2]=b; imgD.data[k+3]=255;
+            }
+        }
+        ctx.putImageData(imgD,0,0);
+        // overlay contour lines
+        ctx.strokeStyle = 'rgba(167,139,250,0.5)';
+        ctx.lineWidth = 1;
+        for (let k=1;k<=8;k++) {
+            const level = lo + (k/9)*(hi-lo);
+            // simple marching: draw cells where the level crosses
+            for (let j=0;j<NY-1;j++) for (let i=0;i<NX-1;i++) {
+                const a = grid[j*NX+i], b = grid[j*NX+i+1];
+                const c = grid[(j+1)*NX+i], d = grid[(j+1)*NX+i+1];
+                let crosses = 0;
+                if ((a-level)*(b-level) < 0) crosses++;
+                if ((b-level)*(d-level) < 0) crosses++;
+                if ((d-level)*(c-level) < 0) crosses++;
+                if ((c-level)*(a-level) < 0) crosses++;
+                if (crosses >= 2) {
+                    const x = xMin + (i/(NX-1))*(xMax-xMin);
+                    const y = yMin + (j/(NY-1))*(yMax-yMin);
+                    const sx = (x-xMin)/(xMax-xMin)*W;
+                    const sy = H - (y-yMin)/(yMax-yMin)*H;
+                    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+                    ctx.fillRect(sx, sy, 2, 2);
+                }
+            }
+        }
+    }
+
+    function drawPath() {
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = '#fbbf24';
+        ctx.beginPath();
+        for (let i=0;i<path.length;i++) {
+            const p = toScreen(path[i].x, path[i].y);
+            if (i===0) ctx.moveTo(p.sx, p.sy); else ctx.lineTo(p.sx, p.sy);
+        }
+        ctx.stroke();
+        // points
+        for (let i=0;i<path.length;i++) {
+            const p = toScreen(path[i].x, path[i].y);
+            ctx.fillStyle = (i===0) ? '#f472b6' : (i===path.length-1 ? '#34d399' : '#a78bfa');
+            ctx.beginPath(); ctx.arc(p.sx, p.sy, (i===0||i===path.length-1)?5:2.2, 0, 2*Math.PI); ctx.fill();
+        }
+    }
+
+    function drawLoss() {
+        lctx.fillStyle = '#0d1117'; lctx.fillRect(0,0,Lw,Lh);
+        if (losses.length < 2) return;
+        const pad = 18;
+        const maxL = Math.max(...losses, 1e-6);
+        const minL = Math.min(...losses);
+        const span = maxL - minL || 1;
+        lctx.strokeStyle = '#a78bfa'; lctx.lineWidth = 1.5;
+        lctx.beginPath();
+        for (let i=0;i<losses.length;i++) {
+            const x = pad + (i/(Math.max(losses.length-1,1)))*(Lw - 2*pad);
+            const y = Lh - pad - ((losses[i]-minL)/span)*(Lh - 2*pad);
+            if (i===0) lctx.moveTo(x,y); else lctx.lineTo(x,y);
+        }
+        lctx.stroke();
+        // axis lines
+        lctx.strokeStyle = '#21262d';
+        lctx.beginPath(); lctx.moveTo(pad, Lh-pad); lctx.lineTo(Lw-pad, Lh-pad); lctx.stroke();
+        lctx.beginPath(); lctx.moveTo(pad, pad); lctx.lineTo(pad, Lh-pad); lctx.stroke();
+        lctx.fillStyle = '#8b949e';
+        lctx.font = '10px JetBrains Mono, monospace';
+        lctx.fillText('loss', 6, 12);
+        lctx.fillText('iter', Lw - pad - 10, Lh - 3);
+        lctx.fillText(maxL.toFixed(2), pad + 4, pad + 10);
+    }
+
+    function redraw() {
+        drawContours();
+        drawPath();
+        drawLoss();
+        const cur = path[path.length-1];
+        const surf = surfaces[surfaceName];
+        const [gx, gy] = surf.g(cur.x, cur.y);
+        document.getElementById('gd-it').textContent = path.length - 1;
+        document.getElementById('gd-l').textContent = surf.f(cur.x, cur.y).toFixed(3);
+        document.getElementById('gd-g').textContent = Math.hypot(gx, gy).toFixed(3);
+    }
+
+    function step() {
+        const cur = path[path.length-1];
+        const surf = surfaces[surfaceName];
+        const [gx, gy] = surf.g(cur.x, cur.y);
+        velocity.x = mom*velocity.x + gx;
+        velocity.y = mom*velocity.y + gy;
+        const nx = cur.x - lr*velocity.x;
+        const ny = cur.y - lr*velocity.y;
+        // clamp
+        const cx = Math.max(xMin*1.1, Math.min(xMax*1.1, nx));
+        const cy = Math.max(yMin*1.1, Math.min(yMax*1.1, ny));
+        path.push({x: cx, y: cy});
+        losses.push(surf.f(cx, cy));
+        if (path.length > 400) { path.shift(); losses.shift(); }
+    }
+    function loop() {
+        if (!running) return;
+        step(); redraw();
+        const cur = path[path.length-1];
+        const [gx, gy] = surfaces[surfaceName].g(cur.x, cur.y);
+        if (Math.hypot(gx,gy) < 1e-3 || path.length > 300) {
+            running = false;
+            document.getElementById('gd-start').textContent = 'Run';
+            return;
+        }
+        raf = requestAnimationFrame(loop);
+    }
+
+    function reset() {
+        running = false;
+        if (raf) cancelAnimationFrame(raf);
+        path = [{x: start.x, y: start.y}];
+        losses = [surfaces[surfaceName].f(start.x, start.y)];
+        velocity = {x:0,y:0};
+        document.getElementById('gd-start').textContent = 'Run';
+        redraw();
+    }
+
+    document.getElementById('gd-lr').addEventListener('input', e => {
+        lr = parseFloat(e.target.value);
+        document.getElementById('gd-lr-readout').textContent = lr.toFixed(3);
+    });
+    document.getElementById('gd-mom').addEventListener('input', e => {
+        mom = parseFloat(e.target.value);
+        document.getElementById('gd-mom-readout').textContent = mom.toFixed(2);
+    });
+    document.getElementById('gd-surface').addEventListener('change', e => {
+        surfaceName = e.target.value;
+        reset();
+    });
+    document.getElementById('gd-start').addEventListener('click', () => {
+        running = !running;
+        document.getElementById('gd-start').textContent = running ? 'Pause' : 'Run';
+        if (running) loop();
+    });
+    document.getElementById('gd-reset').addEventListener('click', reset);
+
+    cvs.addEventListener('click', e => {
+        const rect = cvs.getBoundingClientRect();
+        const sx = (e.clientX - rect.left) * (W/rect.width);
+        const sy = (e.clientY - rect.top) * (H/rect.height);
+        const p = fromScreen(sx, sy);
+        start = p;
+        reset();
+    });
+
+    reset();
+})();
+</script>
+
+</body>
+</html>
